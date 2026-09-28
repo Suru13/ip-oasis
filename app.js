@@ -115,6 +115,69 @@ function getIPScope(ip) {
     return 'Público (Internet)';
 }
 
+// ---- Camada de API com Fallback ----
+
+async function fetchIPData(ipAddress) {
+    // API 1: ipwho.is (substituta moderna do ipwhois.app, sem key, CORS ok)
+    try {
+        const url1 = ipAddress ? `https://ipwho.is/${ipAddress}` : `https://ipwho.is/`;
+        const r1 = await fetch(url1);
+        if (r1.ok) {
+            const d = await r1.json();
+            if (d.success) {
+                return {
+                    ip: d.ip,
+                    success: true,
+                    country: d.country,
+                    country_code: d.country_code,
+                    country_flag: d.flag?.img || null,
+                    region: d.region,
+                    city: d.city,
+                    postal: d.postal,
+                    isp: d.connection?.isp || 'N/A',
+                    org: d.connection?.org || 'N/A',
+                    asn: d.connection?.asn ? `AS${d.connection.asn}` : 'N/A',
+                    timezone: d.timezone?.id || 'N/A',
+                    timezone_gmt: d.timezone?.utc || null,
+                    latitude: d.latitude,
+                    longitude: d.longitude,
+                };
+            }
+        }
+    } catch (_) {}
+
+    // API 2: ip-api.com (fallback, CORS ok via HTTP, usa campo diferente)
+    try {
+        const target = ipAddress || '';
+        const url2 = `https://ip-api.com/json/${target}?fields=status,message,country,countryCode,regionName,city,zip,lat,lon,isp,org,as,timezone,query`;
+        const r2 = await fetch(url2);
+        if (r2.ok) {
+            const d = await r2.json();
+            if (d.status === 'success') {
+                return {
+                    ip: d.query,
+                    success: true,
+                    country: d.country,
+                    country_code: d.countryCode,
+                    country_flag: null,
+                    region: d.regionName,
+                    city: d.city,
+                    postal: d.zip,
+                    isp: d.isp,
+                    org: d.org,
+                    asn: d.as,
+                    timezone: d.timezone,
+                    timezone_gmt: null,
+                    latitude: d.lat,
+                    longitude: d.lon,
+                };
+            }
+        }
+    } catch (_) {}
+
+    throw new Error('Não foi possível conectar a nenhum serviço de consulta.');
+}
+
 async function trackIP(ipAddress) {
     try {
         setLoadingState(true);
@@ -135,7 +198,7 @@ async function trackIP(ipAddress) {
                 org: 'Dispositivo / Rotas Especiais',
                 asn: 'N/A',
                 timezone: 'Local',
-                latitude: 0, // Ponto neutro para o mapa (Equator)
+                latitude: 0,
                 longitude: 0
             };
             
@@ -145,24 +208,13 @@ async function trackIP(ipAddress) {
             return;
         }
 
-        // ipwhois.app API (Free, no key needed, HTTPS supported)
-        const url = ipAddress ? `https://ipwhois.app/json/${ipAddress}` : `https://ipwhois.app/json/`;
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Não foi possível conectar ao serviço.');
-        
-        const data = await response.json();
-        
-        if (!data.success) {
-            throw new Error(data.message || 'IP inválido ou reservado.');
-        }
+        const data = await fetchIPData(ipAddress);
 
         updateUI(data);
         updateMap(data.latitude, data.longitude, data.city);
         
         setLoadingState(false, 'Informações carregadas com sucesso!', 'success');
         
-        // Populate input with detected IP if it was empty initially
         if (!ipAddress) {
             DOM.ipInput.value = data.ip;
         }
@@ -171,6 +223,7 @@ async function trackIP(ipAddress) {
         setLoadingState(false, error.message, 'error');
     }
 }
+
 
 function updateUI(data) {
     // Unhide the grid
