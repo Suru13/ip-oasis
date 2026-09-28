@@ -1,0 +1,280 @@
+:root {
+    --bg-dark: #070913;
+    --primary-blue: #00d2ff;
+    --secondary-blue: #3a7bd5;
+    --glass-bg: rgba(15, 20, 42, 0.6);
+    --glass-border: rgba(0, 210, 255, 0.2);
+    --text-main: #f0f4f8;
+    --text-muted: #8e9bb0;
+    --error: #ff4b4b;
+    --success: #00ff88;
+    --font-main: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-main);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+/* Background Animated Gradient / Glow */
+.background-effect {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(58, 123, 213, 0.15), transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(0, 210, 255, 0.1), transparent 40%);
+    z-index: -1;
+    animation: drift 20s infinite alternate ease-in-out;
+}
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-5%, 5%) scale(1.05); }
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1000px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Glassmorphism Panel Utility */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- Header Section --- */
+.header {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.logo {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.logo .highlight {
+    background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.search-bar input {
+    flex: 1;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    color: white;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+    background: rgba(0,0,0,0.6);
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5);
+}
+
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.status-msg {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    min-height: 20px;
+    color: var(--text-muted);
+}
+.status-msg.error { color: var(--error); }
+.status-msg.success { color: var(--success); }
+
+/* --- Main Results Grid --- */
+.result-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.result-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.map-panel {
+    padding: 1.5rem;
+}
+
+.span-2-col {
+    grid-column: span 2;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 10px;
+}
+
+.panel-header i {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+}
+
+.panel-header h2 {
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+/* Map specific styling */
+.map-container {
+    width: 100%;
+    height: 350px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 10; /* Leaflet issues fix */
+}
+
+/* Leaflet dark mode overrides */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+.leaflet-container {
+    background: #000 !important;
+}
+
+/* Data Panels */
+.data-panel {
+    padding: 1.5rem;
+}
+
+.data-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+    border-color: rgba(0, 210, 255, 0.4);
+}
+
+.data-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.data-item .label {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.data-item .value {
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: white;
+    word-break: break-word;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .result-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .span-2-col, .span-full-technical {
+        grid-column: span 1;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+    
+    .primary-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.span-full-technical {
+    grid-column: span 2;
+}

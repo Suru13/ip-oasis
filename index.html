@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Net Tracker - Informações Completas de Rede</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS (para o Mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Nosso Estilo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-effect"></div>
+
+    <div class="app-container">
+        <!-- Header e Barra de Pesquisa -->
+        <header class="header glass-panel">
+            <h1 class="logo">IP <span class="highlight">Oasis</span></h1>
+            <p class="subtitle">Identifique e rastreie localizações de endereço IP em tempo real</p>
+            
+            <div class="search-bar">
+                <input type="text" id="ipInput" placeholder="Digite um endereço IP (ex: 8.8.8.8)..." autocomplete="off">
+                <button id="searchBtn" class="primary-btn">
+                    <i class="ph ph-magnifying-glass"></i> Rastrear
+                </button>
+            </div>
+            <div id="statusMessage" class="status-msg">Iniciando...</div>
+        </header>
+
+        <!-- Grid Principal (Omitido até carregar os dados) -->
+        <main id="resultContainer" class="result-container hidden">
+            <!-- Painel de Mapa -->
+            <div class="map-panel glass-panel span-2-col">
+                <div class="panel-header">
+                    <i class="ph ph-map-pin"></i> 
+                    <h2>Geolocalização</h2>
+                </div>
+                <div id="map" class="map-container"></div>
+            </div>
+
+            <!-- Dados Globais -->
+            <div class="data-panel glass-panel">
+                <div class="panel-header">
+                    <i class="ph ph-globe"></i>
+                    <h2>Localidade</h2>
+                </div>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="label">País</span>
+                        <span class="value" id="valCountry">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Região/Estado</span>
+                        <span class="value" id="valRegion">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Cidade</span>
+                        <span class="value" id="valCity">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">CEP/Postal Code</span>
+                        <span class="value" id="valZip">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados de Conexão -->
+            <div class="data-panel glass-panel">
+                <div class="panel-header">
+                    <i class="ph ph-router"></i>
+                    <h2>Conexão & Operadora</h2>
+                </div>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="label">Provedor (ISP)</span>
+                        <span class="value" id="valISP">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Organização</span>
+                        <span class="value" id="valOrg">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">ASN</span>
+                        <span class="value" id="valASN">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Fuso Horário</span>
+                        <span class="value" id="valTimezone">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados Técnicos (Novo) -->
+            <div class="data-panel glass-panel span-full-technical">
+                <div class="panel-header">
+                    <i class="ph ph-terminal-window"></i>
+                    <h2>Dados Técnicos</h2>
+                </div>
+                <div class="data-grid" style="flex-direction: row; flex-wrap: wrap; gap: 2rem;">
+                    <div class="data-item">
+                        <span class="label">Classe do IP</span>
+                        <span class="value" id="valClass" style="color: var(--primary-blue); font-weight: 600;">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Escopo (Tipo)</span>
+                        <span class="value" id="valScope">-</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Protocolo</span>
+                        <span class="value" id="valProtocol">IPv4</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Status (Web Ping)</span>
+                        <span class="value" id="valPing" style="color: var(--text-muted);">Testando...</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Nosso Script -->
+    <script src="app.js"></script>
+</body>
+</html>
